@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Workout Plan - DietTrack</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Workout Plan Display Specific Styles (Matching Diet Plan Aesthetics) */
+        .workout-plan-display-container {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .display-header {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .display-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-info h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+        }
+
+        .header-info p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .period-selector {
+            display: flex;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .period-btn {
+            padding: 8px 20px;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .period-btn.active {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .period-btn:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .plan-actions-header {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .action-btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .action-btn-primary:hover {
+            background: #0b7dda;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .action-btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .action-btn-success:hover {
+            background: #388E3C;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .action-btn-info {
+            background: #00BCD4;
+            color: white;
+        }
+
+        .action-btn-info:hover {
+            background: #0097A7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+        }
+
+        .action-btn-warning {
+            background: #FF9800;
+            color: white;
+        }
+
+        .action-btn-warning:hover {
+            background: #F57C00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .table-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .table-title h2 {
+            margin: 0;
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        .date-range-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .date-range {
+            color: #333;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .btn-nav {
+            background: none;
+            border: none;
+            color: #FF9800;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-nav:hover {
+            background: #f0f0f0;
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 200px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #FF9800;
+            box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.1);
+        }
+
+        /* Table Styles */
+        .workout-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .workout-table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .workout-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        .workout-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .date-cell {
+            min-width: 120px;
+        }
+
+        .date-main {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        .date-sub {
+            display: block;
+            color: #666;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .day-cell {
+            min-width: 100px;
+            font-weight: 600;
+        }
+
+        .day-cell.monday {
+            color: #2196F3;
+        }
+
+        .day-cell.tuesday {
+            color: #4CAF50;
+        }
+
+        .day-cell.wednesday {
+            color: #FF9800;
+        }
+
+        .day-cell.thursday {
+            color: #9C27B0;
+        }
+
+        .day-cell.friday {
+            color: #F44336;
+        }
+
+        .day-cell.saturday {
+            color: #00BCD4;
+        }
+
+        .day-cell.sunday {
+            color: #E91E63;
+        }
+
+        .today-badge {
+            display: inline-block;
+            background: #FF9800;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-left: 5px;
+            font-weight: normal;
+        }
+
+        .exercise-cell {
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .exercise-suggestion {
+            border-left: 4px solid #2196F3;
+            padding-left: 10px;
+            margin: 5px 0;
+            background: #f8faff;
+            border-radius: 0 8px 8px 0;
+            padding: 10px;
+        }
+
+        .exercise-logged {
+            border-left: 4px solid #4CAF50;
+            padding-left: 10px;
+            margin: 5px 0;
+            background: #f8fff8;
+            border-radius: 0 8px 8px 0;
+            padding: 10px;
+        }
+
+        .ex-name {
+            font-weight: 500;
+            color: #333;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .ex-details {
+            color: #666;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .ex-category-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #FF9800;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .ex-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-ex-action {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.3s;
+        }
+
+        .btn-log {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-log:hover {
+            background: #0b7dda;
+        }
+
+        .action-cell {
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px;
+        }
+
+        .btn-log-day {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-log-day:hover {
+            background: #388E3C;
+        }
+
+        /* Statistics Panel */
+        .stats-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid #FF9800;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FF9800, #FFB74D);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Loading & Empty States */
+        .loading-state,
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .loading-state i,
+        .empty-state i {
+            font-size: 3rem;
+            color: #FF9800;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .loading-state i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification-success {
+            background: #4CAF50;
+            border-left: 4px solid #2E7D32;
+        }
+
+        .notification-error {
+            background: #f44336;
+            border-left: 4px solid #c62828;
+        }
+
+        .notification-info {
+            background: #2196F3;
+            border-left: 4px solid #0d47a1;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .btn-nav.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="logo">
+            <i class="fas fa-apple-alt"></i>
+            <span>DietTrack</span>
+        </div>
+        <div class="header-user-info">
+            <i class="fas fa-user-circle"></i>
+            <span id="header-username">User</span>
+        </div>
+    </header>
+
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+        </div>
+        <div class="sidebar-links">
+            <a href="dashboard.html" id="nav-dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </a>
+            <a href="profile.html" id="nav-profile">
+                <i class="fas fa-user"></i>
+                Profile
+            </a>
+            <a href="diet-plan.html" id="nav-diet-plan">
+                <i class="fas fa-utensils"></i>
+                Create Diet Plan
+            </a>
+            <a href="workout.html" id="nav-workout">
+                <i class="fas fa-dumbbell"></i>
+                Create Workout Plan
+            </a>
+            <a href="analytics.html" id="nav-analytics">
+                <i class="fas fa-chart-line"></i>
+                Analytics
+            </a>
+            <a href="ai.html" id="nav-ai">
+                <i class="fas fa-robot"></i>
+                AI Insights
+            </a>
+            <a href="feedback.html" id="nav-feedback">
+                <i class="fas fa-comment"></i>
+                Feedback
+            </a>
+            <a href="#" class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="workout-plan-display-container">
+            <!-- Header -->
+            <div class="display-header">
+                <div class="display-header-content">
+                    <div class="header-info">
+                        <h1 id="planTitle">Weekly Workout Plan</h1>
+                        <p id="planSubtitle">Loading your schedule...</p>
+                    </div>
+                    <div class="period-selector">
+                        <button class="period-btn active" onclick="loadWorkoutPlan('week')">
+                            <i class="fas fa-calendar-week"></i> Week
+                        </button>
+                        <button class="period-btn" onclick="loadWorkoutPlan('month')">
+                            <i class="fas fa-calendar"></i> Month
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="plan-actions-header">
+                <button class="action-btn action-btn-success" onclick="logTodayWorkouts()">
+                    <i class="fas fa-check-double"></i> Log Today
+                </button>
+                <button class="action-btn action-btn-primary" onclick="openLogWorkoutModal()">
+                    <i class="fas fa-plus-circle"></i> Log Manual
+                </button>
+                <button class="action-btn action-btn-success" onclick="exportPlan()">
+                    <i class="fas fa-download"></i> Export
+                </button>
+                <button class="action-btn action-btn-info" onclick="sharePlan()">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+                <button class="action-btn action-btn-warning" onclick="refreshPlan()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            <!-- Statistics Panel -->
+            <div class="stats-panel" id="statsPanel">
+                <!-- Stats loaded dynamically -->
+            </div>
+
+            <!-- Workout Table Container -->
+            <div class="table-container" id="tableContainer" style="display: none;">
+                <div class="table-header">
+                    <div class="table-title">
+                        <h2 id="tableTitle">Weekly Workout Plan</h2>
+                        <div class="date-range-container">
+                            <button class="btn-nav prev" onclick="navigateDate(-1)" title="Previous">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="date-range" id="dateRange">Loading dates...</span>
+                            <button class="btn-nav next" onclick="navigateDate(1)" title="Next">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-controls">
+                        <input type="text" id="exerciseSearch" class="search-box" placeholder="Search exercises...">
+                    </div>
+                </div>
+
+                <table class="workout-table" id="workoutPlanTable">
+                    <!-- Table content loaded dynamically -->
+                </table>
+            </div>
+
+            <!-- States -->
+            <div id="loadingState" class="loading-state">
+                <i class="fas fa-spinner"></i>
+                <h3>Loading your workout plan...</h3>
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="fas fa-calendar-times"></i>
+                <h3>No Workout Plan Found</h3>
+                <p>You haven't created a workout plan yet.</p>
+                <button class="action-btn action-btn-primary" onclick="window.location.href='workout.html'"
+                    style="margin: 0 auto;">
+                    <i class="fas fa-plus"></i> Create Plan Now
+                </button>
+            </div>
+        </div>
+    </main>
+    </div>
+
+    <!-- Log Workout Modal -->
+    <div id="logWorkoutModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-dumbbell"></i> Log Workout</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="logWorkoutForm">
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="logDate" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Exercise Name</label>
+                        <input type="text" id="logExerciseName" class="form-control" required>
+                    </div>
+                    <div class="form-row" style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">Duration (min)</label>
+                            <input type="number" id="logDuration" class="form-control" min="1" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">Calories</label>
+                            <input type="number" id="logCalories" class="form-control" min="0" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn" style="background:#eee;" onclick="closeModal()">Cancel</button>
+                <button class="action-btn action-btn-success" onclick="saveExerciseLog()">Save Log</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/workout-plan-display.js"></script>
+    <script src="js/sidebar.js"></script>
+</body>
+
+</html>

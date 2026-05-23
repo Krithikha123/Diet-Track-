@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Plan - DietTrack</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Additional inline styles for diet plan */
+        .plan-status-bar {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+        }
+
+        .plan-status-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+        }
+
+        .plan-status-info p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .plan-actions-top {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-refresh {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .btn-refresh:hover {
+            background-color: #1976D2;
+        }
+
+        .welcome-message {
+            font-size: 1.1rem;
+            color: #2E7D32;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .no-foods {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+
+        .no-foods i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+            display: block;
+        }
+
+        .loading-food-item {
+            text-align: center;
+            padding: 3rem;
+            grid-column: 1 / -1;
+        }
+
+        .loading-spinner-small {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .calorie-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .btn-log-meal {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .btn-log-meal:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dashboard Navigation -->
+    <!-- Dashboard Header -->
+    <header class="dashboard-header">
+        <div class="logo">
+            <i class="fas fa-apple-alt"></i>
+            <span>DietTrack</span>
+        </div>
+        <div class="header-user-info">
+            <i class="fas fa-user-circle"></i>
+            <span id="header-username">User</span>
+        </div>
+    </header>
+
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Menu</h3>
+        </div>
+        <div class="sidebar-links">
+            <a href="dashboard.html" id="nav-dashboard">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+            </a>
+            <a href="profile.html" id="nav-profile">
+                <i class="fas fa-user"></i>
+                Profile
+            </a>
+            <a href="diet-plan.html" id="nav-diet-plan" class="active">
+                <i class="fas fa-utensils"></i>
+                Create Diet Plan
+            </a>
+            <a href="workout.html" id="nav-workout">
+                <i class="fas fa-dumbbell"></i>
+                Create Workout Plan
+            </a>
+            <a href="analytics.html" id="nav-analytics">
+                <i class="fas fa-chart-line"></i>
+                Analytics
+            </a>
+            <a href="ai.html" id="nav-ai">
+                <i class="fas fa-robot"></i>
+                AI Insights
+            </a>
+            <a href="feedback.html" id="nav-feedback">
+                <i class="fas fa-comment"></i>
+                Feedback
+            </a>
+            <a href="#" class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Plan Header -->
+        <div class="diet-plan-header">
+            <h1><i class="fas fa-utensils"></i> Build Your Diet Plan</h1>
+            <p>Select food items for each meal to create your personalized diet plan</p>
+        </div>
+
+        <!-- User Welcome and Status -->
+        <div class="plan-status-bar">
+            <div class="plan-status-info">
+                <h3 id="welcomeMessage">Welcome to Your Diet Plan</h3>
+                <p>Generated: <span id="planDate">Today</span> | Goal: <span id="planGoal">Weight Management</span>
+                </p>
+            </div>
+            <div class="plan-actions-top">
+                <button class="btn-refresh" onclick="loadFoodData()">
+                    <i class="fas fa-sync-alt"></i> Refresh Foods
+                </button>
+            </div>
+        </div>
+
+        <!-- Meals Container with Food Selection -->
+        <div class="meals-container">
+            <!-- Breakfast Section -->
+            <div class="meal-section" id="breakfastSection">
+                <div class="meal-header">
+                    <h3><i class="fas fa-sun"></i> Breakfast</h3>
+                    <span class="meal-time">7:00 AM - 9:00 AM</span>
+                    <span class="selected-count" id="breakfastCount">Selected: 0</span>
+                </div>
+                <div class="food-selection">
+                    <div class="food-options" id="breakfastOptions">
+                        <div class="loading-food-item">
+                            <div class="loading-spinner-small"></div>
+                            <p>Loading breakfast options...</p>
+                        </div>
+                    </div>
+                    <div class="selected-foods" id="breakfastSelected">
+                        <h4>Selected Breakfast Items:</h4>
+                        <div class="selected-list" id="breakfastSelectedList">
+                            <p class="empty-selection">No items selected yet</p>
+                        </div>
+                        <button class="btn-clear-selection" onclick="clearSelection('breakfast')">
+                            <i class="fas fa-trash"></i> Clear Selection
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lunch Section -->
+            <div class="meal-section" id="lunchSection">
+                <div class="meal-header">
+                    <h3><i class="fas fa-utensils"></i> Lunch</h3>
+                    <span class="meal-time">12:00 PM - 2:00 PM</span>
+                    <span class="selected-count" id="lunchCount">Selected: 0</span>
+                </div>
+                <div class="food-selection">
+                    <div class="food-options" id="lunchOptions">
+                        <div class="loading-food-item">
+                            <div class="loading-spinner-small"></div>
+                            <p>Loading lunch options...</p>
+                        </div>
+                    </div>
+                    <div class="selected-foods" id="lunchSelected">
+                        <h4>Selected Lunch Items:</h4>
+                        <div class="selected-list" id="lunchSelectedList">
+                            <p class="empty-selection">No items selected yet</p>
+                        </div>
+                        <button class="btn-clear-selection" onclick="clearSelection('lunch')">
+                            <i class="fas fa-trash"></i> Clear Selection
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dinner Section -->
+            <div class="meal-section" id="dinnerSection">
+                <div class="meal-header">
+                    <h3><i class="fas fa-moon"></i> Dinner</h3>
+                    <span class="meal-time">7:00 PM - 9:00 PM</span>
+                    <span class="selected-count" id="dinnerCount">Selected: 0</span>
+                </div>
+                <div class="food-selection">
+                    <div class="food-options" id="dinnerOptions">
+                        <div class="loading-food-item">
+                            <div class="loading-spinner-small"></div>
+                            <p>Loading dinner options...</p>
+                        </div>
+                    </div>
+                    <div class="selected-foods" id="dinnerSelected">
+                        <h4>Selected Dinner Items:</h4>
+                        <div class="selected-list" id="dinnerSelectedList">
+                            <p class="empty-selection">No items selected yet</p>
+                        </div>
+                        <button class="btn-clear-selection" onclick="clearSelection('dinner')">
+                            <i class="fas fa-trash"></i> Clear Selection
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Snacks Section -->
+            <div class="meal-section" id="snacksSection">
+                <div class="meal-header">
+                    <h3><i class="fas fa-apple-alt"></i> Snacks</h3>
+                    <span class="meal-time">Between Meals</span>
+                    <span class="selected-count" id="snacksCount">Selected: 0</span>
+                </div>
+                <div class="food-selection">
+                    <div class="food-options" id="snacksOptions">
+                        <div class="loading-food-item">
+                            <div class="loading-spinner-small"></div>
+                            <p>Loading snacks options...</p>
+                        </div>
+                    </div>
+                    <div class="selected-foods" id="snacksSelected">
+                        <h4>Selected Snack Items:</h4>
+                        <div class="selected-list" id="snacksSelectedList">
+                            <p class="empty-selection">No items selected yet</p>
+                        </div>
+                        <button class="btn-clear-selection" onclick="clearSelection('snacks')">
+                            <i class="fas fa-trash"></i> Clear Selection
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Plan Actions Footer -->
+        <div class="plan-actions-footer">
+            <button class="btn-generate-plan" onclick="generatePlanFromSelection()">
+                <i class="fas fa-magic"></i> Generate Plan from Selection
+            </button>
+            <button class="btn-clear-all" onclick="clearAllSelections()">
+                <i class="fas fa-broom"></i> Clear All Selections
+            </button>
+            <button class="btn-save-custom-plan" onclick="saveCustomPlan()">
+                <i class="fas fa-save"></i> Save Custom Plan
+            </button>
+        </div>
+
+        <!-- Nutrition Summary -->
+        <div class="nutrition-summary">
+            <h3>Nutrition Summary</h3>
+            <div class="nutrition-summary-cards">
+                <div class="nutrition-card-detailed">
+                    <h4>Total Calories</h4>
+                    <div class="nutrition-value-large" id="totalCalories">0</div>
+                    <p class="nutrition-unit">kcal</p>
+                    <div class="nutrition-progress">
+                        <div class="nutrition-progress-bar calorie-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="nutrition-card-detailed">
+                    <h4>Protein</h4>
+                    <div class="nutrition-value-large" id="totalProtein">0</div>
+                    <p class="nutrition-unit">grams</p>
+                    <div class="nutrition-progress">
+                        <div class="nutrition-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="nutrition-card-detailed">
+                    <h4>Carbohydrates</h4>
+                    <div class="nutrition-value-large" id="totalCarbs">0</div>
+                    <p class="nutrition-unit">grams</p>
+                    <div class="nutrition-progress">
+                        <div class="nutrition-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="nutrition-card-detailed">
+                    <h4>Fats</h4>
+                    <div class="nutrition-value-large" id="totalFats">0</div>
+                    <p class="nutrition-unit">grams</p>
+                    <div class="nutrition-progress">
+                        <div class="nutrition-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions Panel -->
+        <div class="instructions-panel">
+            <h3><i class="fas fa-info-circle"></i> How to Use</h3>
+            <div class="instructions-list">
+                <div class="instruction-item">
+                    <i class="fas fa-search"></i>
+                    <div>
+                        <h4>Browse Foods</h4>
+                        <p>Food items are loaded from the database based on your diet preferences from your profile.
+                        </p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <div>
+                        <h4>Select Items</h4>
+                        <p>Click on any food card to select it. Selected items will appear in the right panel.</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <i class="fas fa-calculator"></i>
+                    <div>
+                        <h4>Track Nutrition</h4>
+                        <p>Nutrition totals are calculated automatically as you select items.</p>
+                    </div>
+                </div>
+                <div class="instruction-item">
+                    <i class="fas fa-save"></i>
+                    <div>
+                        <h4>Save Your Plan</h4>
+                        <p>Once you're happy with your selections, generate and save your custom diet plan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/diet-plan.js"></script>
+    <script src="js/sidebar.js"></script>
+
+    <script>
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update user info
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+
+            if (user.name) {
+                document.getElementById('welcomeMessage').textContent = `Welcome, ${user.name}`;
+            }
+
+            if (profile.goal) {
+                document.getElementById('planGoal').textContent = profile.goal;
+            }
+
+            document.getElementById('planDate').textContent = new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            // Check if user has completed profile
+            if (!profile.height || !profile.weight) {
+                alert('Please complete your profile first to get personalized food recommendations.');
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+
+</html>

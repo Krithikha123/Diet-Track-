@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - DietTrack</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-apple-alt"></i>
+                <span>DietTrack</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">HOME</a>
+                <a href="about.html">ABOUT</a>
+                <a href="bmi.html">BMI CALCULATOR</a>
+                <a href="login.html" class="active signin-btn">SIGN IN</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="form-container">
+        <h2>Welcome to DietTrack</h2>
+
+        <!-- New User Registration Form -->
+        <div id="registration-form" class="form-section">
+            <h3>Create New Account</h3>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-submit">Create Account</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                Already have an account? <a href="#" id="show-login">Sign In</a>
+            </p>
+        </div>
+
+        <!-- Existing User Login Form -->
+        <div id="login-form" class="form-section" style="display: none;">
+            <h3>Sign In to Your Account</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <button type="submit" class="btn-submit">Sign In</button>
+            </form>
+            <p style="text-align: center; margin-top: 1rem;">
+                New user? <a href="#" id="show-register">Create Account</a>
+            </p>
+        </div>
+
+        <div id="message" style="margin-top: 1rem; text-align: center;"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 DietTrack. All rights reserved.</p>
+    </footer>
+
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

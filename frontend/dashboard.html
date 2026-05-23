@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - DietTrack</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- Dashboard Navigation -->
+    <div class="dashboard">
+        <!-- Dashboard Header -->
+        <header class="dashboard-header">
+            <div class="logo">
+                <i class="fas fa-apple-alt"></i>
+                <span>DietTrack</span>
+            </div>
+            <div class="header-user-info">
+                <i class="fas fa-user-circle"></i>
+                <span id="header-username">User</span>
+            </div>
+        </header>
+
+        <!-- Sidebar Toggle Button -->
+        <button class="sidebar-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Menu</h3>
+            </div>
+            <div class="sidebar-links">
+                <a href="dashboard.html" id="nav-dashboard" class="active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="profile.html" id="nav-profile">
+                    <i class="fas fa-user"></i>
+                    Profile
+                </a>
+                <a href="diet-plan.html" id="nav-diet-plan">
+                    <i class="fas fa-utensils"></i>
+                    Create Diet Plan
+                </a>
+                <a href="workout.html" id="nav-workout">
+                    <i class="fas fa-dumbbell"></i>
+                    Create Workout Plan
+                </a>
+                <a href="analytics.html" id="nav-analytics">
+                    <i class="fas fa-chart-line"></i>
+                    Analytics
+                </a>
+                <a href="ai.html" id="nav-ai">
+                    <i class="fas fa-robot"></i>
+                    AI Insights
+                </a>
+                <a href="feedback.html" id="nav-feedback">
+                    <i class="fas fa-comment"></i>
+                    Feedback
+                </a>
+                <a href="#" class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <p class="greeting-text" id="greeting-text">Hi, User!</p>
+            <h1>Welcome to Your Dashboard</h1>
+
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h2>Complete Your Profile</h2>
+                    <p>Set up your preferences to get personalized recommendations.</p>
+                    <a href="profile.html" class="btn-primary">Go to Profile</a>
+                </div>
+                <div class="card">
+                    <h2>Your Diet Plan</h2>
+                    <p>Your personalized diet plan is created — Stay on top of your goals by logging meals consistently.
+                    </p>
+                    <a href="diet-plan-display.html" class="btn-primary">View Plan</a>
+                </div>
+                <div class="card">
+                    <h2>Your Workout Plan</h2>
+                    <p>Your personalized workout plan is ready — Follow your daily routine to reach your fitness goals.
+                    </p>
+                    <a href="workout-plan-display.html" class="btn-primary">View Plan</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                const fullName = user.name || user.username || 'User';
+                const headerEl = document.getElementById('header-username');
+                const greetingEl = document.getElementById('greeting-text');
+                if (headerEl) headerEl.textContent = fullName;
+                if (greetingEl) greetingEl.textContent = 'Hi, ' + fullName + '!';
+            }
+        });
+    </script>
+</body>
+
+</html>
